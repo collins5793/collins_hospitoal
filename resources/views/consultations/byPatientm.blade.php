@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('layouts.med')
+@section('title', 'Dossier du patient : ' . $patient->user->name)
+@section('content')
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Dossier du patient : {{ $patient->user->name }}
@@ -18,7 +20,7 @@
             </div>
         </div>
 
-        <div class="mb-6 flex gap-4">
+        <div class="mb-6 flex gap-4" x-data="{ openPaiement: false, openPharmacie: false }">
             @if($patient->id_salle)
                 <!-- Bouton quitter la salle -->
                 <form method="POST" action="{{ route('patients.quitter', $patient->id_patient) }}">
@@ -40,6 +42,44 @@
                     Envoyer dans une salle
                 </a>
             @endif
+
+            <!-- Envoyer à la pharmacie -->
+        <button 
+            @click="openPharmacie = true"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+            Envoyer à la pharmacie
+        </button>
+
+        <!-- MODAL PHARMACIE -->
+        <div x-cloak x-show="openPharmacie" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50" x-transition>
+            <div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative" @click.away="openPharmacie = false" x-transition>
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Ordonnance Pharmacie</h2>
+                <form action="" method="POST">
+                    @csrf
+                    <input type="hidden" name="patient_id" value="{{ $patient->id_patient }}">
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold">Médicaments</label>
+                        <textarea name="medicaments" rows="4" class="w-full p-2 border rounded focus:ring focus:ring-blue-200" placeholder="Ex: Paracétamol 500mg…"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold">Quantité</label>
+                        <input type="text" name="quantite" class="w-full p-2 border rounded focus:ring focus:ring-blue-200" placeholder="Ex: 2 comprimés…">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold">Instructions</label>
+                        <textarea name="instructions" rows="3" class="w-full p-2 border rounded focus:ring focus:ring-blue-200" placeholder="Prendre après repas…"></textarea>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" @click="openPharmacie = false" class="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100">Annuler</button>
+                        <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Envoyer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
         </div>
 
 
@@ -102,4 +142,4 @@
             @endif
         </div>
     </div>
-</x-app-layout>
+@endsection

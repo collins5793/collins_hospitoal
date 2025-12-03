@@ -15,7 +15,7 @@
                 <a href="{{ route('dashboard') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                    {{ request()->routeIs('dashboard') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">🏠</span>
+                    <span class="text-lg"></span>
                     <span>Dashboard</span>
                 </a>
             </li>
@@ -26,7 +26,7 @@
                 <a href="{{ route('patients.index') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                    {{ request()->routeIs('patients.*') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">🧑‍🦽</span>
+                    <span class="text-lg"></span>
                     <span>Liste des patients</span>
                 </a>
             </li>
@@ -37,7 +37,7 @@
                 <a href="{{ route('consultations.byMedecin', auth()->user()->medecin->id_medecin) }}"
                 class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                 {{ request()->routeIs('consultations.*') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">📋</span>
+                    <span class="text-lg"></span>
                     <span>Voir mes consultations</span>
                 </a>
 
@@ -48,7 +48,7 @@
             <li>
                 <a href="{{ route('profile.edit') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition">
-                    <span class="text-lg">⚙️</span>
+                    <span class="text-lg"></span>
                     <span>Profil</span>
                 </a>
             </li>
@@ -58,7 +58,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="w-full flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-red-600 transition text-left">
-                        <span class="text-lg">🚪</span>
+                        <span class="text-lg"></span>
                         <span>Se déconnecter</span>
                     </button>
                 </form>

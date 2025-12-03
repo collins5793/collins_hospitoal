@@ -6,31 +6,33 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\SalleController;
 use \App\Http\Controllers\ConsultationController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\MedecinController;
+
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
     if ($user->role === 'admin') {
-        // Admin → dashboard racine
-        return view('dashboard');
+        return redirect()->route('admin.dashboard');
     } elseif ($user->role === 'medecin') {
-        // Médecin → dashboard spécifique
         return redirect()->route('medecin.dashboard');
     } else {
         abort(403, 'Accès non autorisé.');
     }
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+});
 
-Route::get('/medecin/dashboard', function () {
-    return view('medecin.dashboard'); // vue spécifique médecin
-})->middleware(['auth', 'verified'])->name('medecin.dashboard');
-
+Route::middleware(['auth'])->prefix('medecin')->name('medecin.')->group(function () {
+    Route::get('/dashboard', [MedecinController::class, 'dashboard'])->name('dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -44,7 +46,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
 
-    // Routes spécifiques
     Route::post('users/{id}/role', [\App\Http\Controllers\Admin\UserController::class, 'updateRole'])
         ->name('users.updateRole');
 
@@ -124,5 +125,12 @@ Route::post('/patients/{patient}/assigner', [SalleController::class, 'assignerPa
 Route::post('/patients/{patient}/quitter', [SalleController::class, 'quitterSalle'])
     ->name('patients.quitter')
     ->middleware(['auth']);
+
+
+
+
+
+
+
 
     require __DIR__.'/auth.php';

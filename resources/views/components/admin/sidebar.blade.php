@@ -15,7 +15,7 @@
                 <a href="{{ route('dashboard') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                    {{ request()->routeIs('dashboard') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">🏠</span>
+                    <span class="text-lg"></span>
                     <span>Dashboard</span>
                 </a>
             </li>
@@ -26,14 +26,14 @@
                 <a href="{{ route('admin.users.index') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                    {{ request()->routeIs('admin.users.*') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">👥</span>
+                    <span class="text-lg"></span>
                     <span>Liste des utilisateurs</span>
                 </a>
             </li>
             <li>
                 <a href="{{ route('register') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition">
-                    <span class="text-lg">➕</span>
+                    <span class="text-lg"></span>
                     <span>Ajouter un Admin</span>
                 </a>
             </li>
@@ -44,7 +44,7 @@
                 <a href="{{ route('admin.medecins.index') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                    {{ request()->routeIs('admin.medecins.*') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">🧑‍⚕️</span>
+                    <span class="text-lg"></span>
                     <span>Liste des médecins</span>
                 </a>
             </li>
@@ -55,7 +55,7 @@
                 <a href="{{ route('admin.patients.index') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                    {{ request()->routeIs('admin.patients.*') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">🧑‍🦽</span>
+                    <span class="text-lg"></span>
                     <span>Liste des patients</span>
                 </a>
             </li>
@@ -66,7 +66,7 @@
                 <a href="{{ route('consultations.index') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                    {{ request()->routeIs('consultations.*') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">📋</span>
+                    <span class="text-lg"></span>
                     <span>Voir les consultations</span>
                 </a>
             </li>
@@ -77,14 +77,14 @@
                 <a href="{{ route('salles.index') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition
                    {{ request()->routeIs('salles.*') ? 'bg-gray-800' : '' }}">
-                    <span class="text-lg">🏥</span>
+                    <span class="text-lg"></span>
                     <span>Liste des salles</span>
                 </a>
             </li>
             <li>
                 <a href="{{ route('salles.create') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition">
-                    <span class="text-lg">➕</span>
+                    <span class="text-lg"></span>
                     <span>Ajouter une salle</span>
                 </a>
             </li>
@@ -94,7 +94,7 @@
             <li>
                 <a href="{{ route('profile.edit') }}"
                    class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition">
-                    <span class="text-lg">⚙️</span>
+                    <span class="text-lg"></span>
                     <span>Profil</span>
                 </a>
             </li>
@@ -104,7 +104,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="w-full flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-red-600 transition text-left">
-                        <span class="text-lg">🚪</span>
+                        <span class="text-lg"></span>
                         <span>Se déconnecter</span>
                     </button>
                 </form>

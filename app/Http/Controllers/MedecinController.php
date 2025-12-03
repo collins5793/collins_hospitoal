@@ -6,6 +6,12 @@ use App\Models\Medecin;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Patient;
+use App\Models\Salle;
+use App\Models\Consultation;
+use App\Models\Dossier;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class MedecinController extends Controller
 {
@@ -112,5 +118,83 @@ class MedecinController extends Controller
         $medecin->user()->delete();
 
         return redirect()->route('medecins.index')->with('success', 'Médecin supprimé avec succès.');
+    }
+
+    public function dashboard()
+    {
+        $medecin = Auth::user()->medecin;
+
+        // --- Statistiques rapides ---
+        $patientsToday = Patient::whereHas('consultations', function($q) use ($medecin) {
+            $q->where('id_medecin', $medecin->id_medecin)
+              ->whereDate('date', Carbon::today());
+        })->count();
+
+        $consultationsToday = Consultation::where('id_medecin', $medecin->id_medecin)
+            ->whereDate('date', Carbon::today())
+            ->count();
+
+        $patientsEnSalle = Patient::where('id_salle', '!=', null)
+            ->whereHas('consultations', fn($q) => $q->where('id_medecin', $medecin->id_medecin))
+            ->count();
+
+        $ordonnancesEnAttente = Dossier::where('id_medecin', $medecin->id_medecin)
+            ->whereNotNull('prescription')
+            ->whereDoesntHave('consultationLink') // pas encore traitée
+            ->count();
+
+        // --- Graphique : consultations par jour (dernière semaine) ---
+        $consultationsPerDay = Consultation::where('id_medecin', $medecin->id_medecin)
+            ->whereDate('date', '>=', Carbon::now()->subDays(6))
+            ->selectRaw('DATE(date) as jour, COUNT(*) as total')
+            ->groupBy('jour')
+            ->orderBy('jour', 'ASC')
+            ->get()
+            ->mapWithKeys(fn($item) => [$item->jour => $item->total]);
+
+        $last7Days = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $day = Carbon::today()->subDays($i)->toDateString();
+            $last7Days[$day] = $consultationsPerDay[$day] ?? 0;
+        }
+
+        // --- Graphique : répartition des patients par salle ---
+        $patientsPerSalle = Salle::withCount(['patients' => fn($q) => $q->whereHas('consultations', fn($q2) => $q2->where('id_medecin', $medecin->id_medecin))])
+            ->get()
+            ->pluck('patients_count', 'type');
+
+        // --- Graphique optionnel : répartition par sexe ---
+        $patientsParSexe = Patient::whereHas('consultations', fn($q) => $q->where('id_medecin', $medecin->id_medecin))
+            ->with('user')
+            ->get()
+            ->groupBy(fn($p) => $p->user->sexe)
+            ->map(fn($group) => $group->count());
+
+        // --- Derniers patients ---
+        $recentPatients = Patient::whereHas('consultations', fn($q) => $q->where('id_medecin', $medecin->id_medecin))
+            ->with('user', 'salle')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // --- Dernières consultations ---
+        $recentConsultations = Consultation::where('id_medecin', $medecin->id_medecin)
+            ->with('patient.user', 'dossier')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('medecin.dashboard', compact(
+            'medecin',
+            'patientsToday',
+            'consultationsToday',
+            'patientsEnSalle',
+            'ordonnancesEnAttente',
+            'last7Days',
+            'patientsPerSalle',
+            'patientsParSexe',
+            'recentPatients',
+            'recentConsultations'
+        ));
     }
 }
