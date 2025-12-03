@@ -1,0 +1,169 @@
+Cette plateforme est une application web développée avec Laravel 10 et Tailwind CSS, permettant de gérer un hôpital avec les fonctionnalités suivantes :
+
+Gestion des administrateurs, médecins et patients
+
+Gestion des consultations et dossiers médicaux
+
+Attribution des patients aux salles
+
+Accès aux informations selon le rôle de l’utilisateur (Admin / Médecin / Patient)
+
+Le but est de centraliser et faciliter la gestion des patients, des médecins et de leurs interactions dans un hôpital.
+
+
+Routes : Définies dans routes/web.php, elles sont regroupées par rôle et fonctionnalité.
+
+Contrôleurs :
+
+AdminController : gestion des utilisateurs, médecins et patients.
+
+MedecinController : actions propres aux médecins (consultations, dossiers).
+
+PatientController : actions relatives aux patients.
+
+SalleController : gestion des salles et attribution des patients.
+
+ConsultationController : création, modification et affichage des consultations et dossiers.
+
+Modèles :
+
+User : représente tous les utilisateurs.
+
+Patient : étend User, contient l’attribution à une salle et relations avec les dossiers et consultations.
+
+Medecin : étend User, contient spécialité, consultations et dossiers liés.
+
+Consultation : associe un patient, un médecin et un dossier.
+
+Dossier : contient les informations médicales détaillées (motif, examens, prescription, traitement).
+
+Salle : contient les informations sur les chambres et les patients assignés.
+
+Layouts et composants :
+
+layouts/admin.blade.php : layout principal pour les administrateurs.
+
+layouts/med.blade.php : layout principal pour les médecins.
+
+components/admin/sidebar.blade.php et components/medecin/sidebar.blade.php : barres de navigation spécifiques à chaque rôle.
+
+
+Peut créer, modifier et supprimer des utilisateurs (admins, médecins, patients).
+
+Peut consulter toutes les consultations et dossiers.
+
+Peut gérer les salles et assigner les patients.
+
+
+Peut créer et modifier des consultations et dossiers médicaux.
+
+Peut voir la liste de ses patients et leurs consultations.
+
+Accès limité aux fonctionnalités administratives.
+
+
+Peut consulter ses propres dossiers et consultations.
+
+Pas accès à la création ou modification de données médicales.
+
+
+
+Le médecin sélectionne un patient et crée une consultation.
+
+Lors de la création, un dossier médical est créé simultanément.
+
+Chaque consultation contient :
+
+Date et heure
+
+Motif de consultation
+
+Examens réalisés
+
+Prescription médicale
+
+Traitement donné
+
+Les consultations peuvent être modifiées ou supprimées par le médecin ou l’admin selon le rôle.
+
+
+Assigner un patient : l’admin peut assigner un patient à une salle via un formulaire.
+
+Quitter une salle : l’admin peut retirer un patient de sa salle actuelle.
+
+Vérification automatique si le patient est déjà dans une salle.
+
+Les layouts sont spécifiques à chaque rôle.
+
+Les sidebars contiennent des liens contextuels :
+
+Admin : gestion utilisateurs, médecins, patients, consultations, salles
+
+Médecin : ses consultations, patients, profils
+
+Chaque page hérite de son layout et utilise des composants Blade pour l’organisation.
+
+Modèle	Relations principales
+User	1-to-1 avec Medecin ou Patient
+Patient	belongsTo User, hasMany Dossier, hasMany Consultation, belongsTo Salle
+Medecin	belongsTo User, hasMany Dossier, hasMany Consultation
+Consultation	belongsTo Patient, belongsTo Medecin, belongsTo Dossier
+Dossier	belongsTo Patient, belongsTo Medecin, hasOne Consultation
+Salle	hasMany Patients
+
+GET /dashboard → Accueil selon rôle
+
+GET /admin/users → Liste des utilisateurs
+
+GET /medecins/{id}/consultations → Liste des consultations d’un médecin
+
+GET /patients/{id}/consultations → Liste des consultations d’un patient
+
+POST /consultations → Créer une consultation et son dossier
+
+PUT /consultations/{id} → Modifier consultation et dossier
+
+POST /salles/{id}/assign → Assigner un patient à une salle
+
+POST /salles/{id}/quit → Retirer un patient de la salle
+
+
+Utilisation de Tailwind CSS pour le design réactif et les formulaires stylés.
+
+Les formulaires utilisent des composants Blade (<x-input-label>, <x-text-input>, <x-input-error>) pour uniformité.
+
+Scripts JS simples pour afficher des champs conditionnels (ex : spécialité pour médecin).
+
+Cloner le projet :
+
+git clone <repo-url>
+
+
+Installer les dépendances :
+
+composer install
+npm install
+npm run dev
+
+
+Configurer .env :
+
+Base de données, mail et autres paramètres.
+
+Migrer la base de données :
+
+php artisan migrate --seed
+
+
+Lancer le serveur local :
+
+php artisan serve
+
+
+Accéder à la plateforme via http://127.0.0.1:8000.
+
+Les validations sont appliquées dans les contrôleurs pour sécuriser les données.
+
+Chaque action est protégée par middleware (auth, role) pour respecter les permissions.
+
+Les erreurs et succès sont gérées via des sessions (with('error'), with('success')).
